@@ -72,7 +72,6 @@
         }
         .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,200,66,0.15); }
         .login-err { color: #ff6b6b; font-size: 13px; margin-top: 10px; min-height: 20px; }
-        .login-hint { margin-top: 14px; font-size: 10px; color: rgba(255,255,255,0.08); letter-spacing: 2px; }
         
         .header { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
         .header-title { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
@@ -200,7 +199,6 @@
             <input type="password" v-model="loginPass" class="login-field" placeholder="пароль" @keyup.enter="login()">
             <button class="login-btn" @click="login()">⟡ войти</button>
             <div class="login-err">{{ loginError }}</div>
-            <div class="login-hint">⌘ логин: owner | пароль: chmchm333222111</div>
         </div>
     </div>
 
@@ -366,7 +364,7 @@
                     <input v-model="newOwnerPass" placeholder="новый пароль" type="password" style="flex:1;">
                     <button class="btn-add" @click="updateOwner()">⟳ обновить</button>
                 </div>
-                <div class="user-count" style="margin-top:6px;">⌘ текущий: owner / chmchm333222111</div>
+                <div class="user-count" style="margin-top:6px;">⌘ текущий: owner</div>
             </div>
 
         </div>
