@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✦ ALPHA RAID ADMIN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #08080f;
+            color: #e8e8f0;
+            overflow-x: hidden;
+        }
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 20% 20%, rgba(255,200,50,0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 80%, rgba(180,80,255,0.04) 0%, transparent 50%),
+                        #08080f;
+            z-index: 0;
+        }
+        .glass {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px) saturate(1.4);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 18px; }
+        .login-wrap { display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { max-width: 400px; width: 100%; padding: 40px 44px; text-align: center; }
+        .login-logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #f5c842, #d48a1a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .login-sub { color: rgba(255,255,255,0.25); font-size: 11px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 24px; }
+        .login-icon { font-size: 48px; margin-bottom: 10px; opacity: 0.4; }
+        .login-field {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            color: #f0f0f8;
+            font-size: 14px;
+            transition: all 0.3s;
+            outline: none;
+            margin-bottom: 10px;
+        }
+        .login-field:focus { border-color: rgba(245,200,66,0.3); background: rgba(255,255,255,0.08); box-shadow: 0 0 30px rgba(245,200,66,0.04); }
+        .login-field::placeholder { color: rgba(255,255,255,0.2); }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #f5c842, #d48a1a);
+            border: none;
+            border-radius: 10px;
+            color: #0a0a12;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,200,66,0.15); }
+        .login-err { color: #ff6b6b; font-size: 13px; margin-top: 10px; min-height: 20px; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .header-title { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .header-title .acc { color: #f5c842; }
+        .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .badge-owner { background: rgba(245,200,66,0.12); color: #f5c842; padding: 4px 14px; border-radius: 16px; font-size: 10px; border: 1px solid rgba(245,200,66,0.06); letter-spacing: 1px; }
+        .badge-admin { background: rgba(100,200,255,0.06); color: #6ab0e0; padding: 4px 14px; border-radius: 16px; font-size: 10px; border: 1px solid rgba(100,200,255,0.03); letter-spacing: 1px; }
+        .btn-exit { background: rgba(255,60,60,0.08); color: #ff6b6b; border: 1px solid rgba(255,60,60,0.04); padding: 6px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; transition: 0.25s; }
+        .btn-exit:hover { background: rgba(255,60,60,0.15); }
+        
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .stat-item { padding: 16px 18px; text-align: center; transition: 0.3s; }
+        .stat-item .num { font-family: 'Orbitron', monospace; font-size: 24px; font-weight: 700; background: linear-gradient(135deg, #f5c842, #d48a1a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-item .lbl { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+        .stat-item .ic { font-size: 20px; display: block; margin-bottom: 4px; }
+        
+        .grid-main { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+        .card { padding: 20px 24px; transition: 0.3s; }
+        .card:hover { border-color: rgba(255,255,255,0.06); }
+        .card-head { font-size: 14px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.7); }
+        .card-head .ic { font-size: 18px; }
+        
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .list-row:last-child { border-bottom: none; }
+        .list-row .nm { font-size: 13px; color: rgba(255,255,255,0.85); }
+        
+        .btn-s { padding: 4px 12px; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+        .btn-s:hover { transform: scale(1.04); }
+        .btn-danger { background: rgba(255,60,60,0.12); color: #ff6b6b; }
+        .btn-danger:hover { background: rgba(255,60,60,0.22); }
+        .btn-gold { background: rgba(245,200,66,0.08); color: #f5c842; }
+        .btn-gold:hover { background: rgba(245,200,66,0.15); }
+        .btn-green { background: rgba(60,255,120,0.06); color: #6ae08a; }
+        .btn-green:hover { background: rgba(60,255,120,0.12); }
+        .btn-blue { background: rgba(60,180,255,0.06); color: #6ab0e0; }
+        .btn-blue:hover { background: rgba(60,180,255,0.12); }
+        
+        .input-line { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .input-line input, .input-line select {
+            flex: 1; min-width: 80px; padding: 9px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            color: #e8e8f0;
+            font-size: 13px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-line input:focus, .input-line select:focus { border-color: rgba(245,200,66,0.15); background: rgba(255,255,255,0.07); }
+        .input-line input::placeholder { color: rgba(255,255,255,0.12); }
+        .input-line select option { background: #0a0a12; color: #e8e8f0; }
+        .input-line .btn-add { padding: 9px 18px; background: linear-gradient(135deg, #f5c842, #d48a1a); border: none; border-radius: 8px; color: #0a0a12; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.25s; }
+        .input-line .btn-add:hover { transform: scale(1.04); }
+        
+        .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .toggle-switch { width: 36px; height: 18px; background: rgba(255,255,255,0.08); border-radius: 9px; cursor: pointer; position: relative; transition: 0.3s; }
+        .toggle-switch.active { background: rgba(245,200,66,0.15); }
+        .toggle-switch .knob { width: 12px; height: 12px; background: #666; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: 0.3s; }
+        .toggle-switch.active .knob { left: 21px; background: #f5c842; }
+        .toggle-lbl { font-size: 12px; color: rgba(255,255,255,0.3); }
+        .toggle-lbl.active { color: #f5c842; }
+        
+        .log-box { max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 8px; padding: 10px 12px; font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.8; }
+        .log-box::-webkit-scrollbar { width: 4px; }
+        .log-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 2px; }
+        .log-line { color: rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.02); padding: 2px 0; }
+        .log-line .t { color: rgba(255,255,255,0.1); margin-right: 10px; }
+        .log-line .m { color: rgba(255,255,255,0.6); }
+        
+        .log-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .log-actions .btn-l { padding: 5px 14px; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+        .btn-l-refresh { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.3); }
+        .btn-l-refresh:hover { background: rgba(255,255,255,0.06); }
+        .btn-l-clear { background: rgba(255,60,60,0.06); color: #ff6b6b; }
+        .btn-l-clear:hover { background: rgba(255,60,60,0.12); }
+        
+        .backup-line { display: flex; gap: 8px; flex-wrap: wrap; }
+        .backup-line .btn-b { padding: 7px 16px; border: none; border-radius: 8px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .backup-line .btn-b:hover { transform: scale(1.04); }
+        .backup-info { font-size: 11px; color: rgba(255,255,255,0.15); margin-top: 6px; }
+        
+        .mail-area { width: 100%; min-height: 70px; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; color: #e8e8f0; font-size: 13px; outline: none; transition: 0.3s; resize: vertical; font-family: 'Inter', sans-serif; }
+        .mail-area:focus { border-color: rgba(245,200,66,0.10); background: rgba(255,255,255,0.05); }
+        .mail-area::placeholder { color: rgba(255,255,255,0.08); }
+        
+        .mail-line { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .mail-line .btn-m { padding: 8px 18px; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .mail-line .btn-m:hover { transform: scale(1.04); }
+        .btn-m-send { background: linear-gradient(135deg, #f5c842, #d48a1a); color: #0a0a12; }
+        .btn-m-send:hover { box-shadow: 0 4px 24px rgba(245,200,66,0.10); }
+        .btn-m-test { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4); }
+        .btn-m-test:hover { background: rgba(255,255,255,0.06); }
+        
+        .user-count { font-size: 11px; color: rgba(255,255,255,0.12); margin-top: 8px; }
+        .permission-tag { font-size: 9px; padding: 2px 10px; border-radius: 12px; background: rgba(255,200,80,0.06); color: rgba(255,200,80,0.3); border: 1px solid rgba(255,200,80,0.02); }
+        .permission-tag.active { background: rgba(255,200,80,0.08); color: #f5c842; border-color: rgba(255,200,80,0.04); }
+        .footer { text-align: center; margin-top: 32px; padding: 16px; color: rgba(255,255,255,0.03); font-size: 10px; letter-spacing: 3px; }
+        
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .login-box { padding: 28px 20px; }
+            .header { flex-direction: column; text-align: center; }
+            .grid-main { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
+            .card { padding: 14px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+
+<div class="container" id="app">
+
+    <!-- ВХОД -->
+    <div v-if="!loggedIn" class="login-wrap">
+        <div class="login-box glass">
+            <div class="login-icon">⌘</div>
+            <div class="login-logo">✦ ALPHA RAID</div>
+            <div class="login-sub">admin panel</div>
+            <input type="text" v-model="loginUser" class="login-field" placeholder="логин" @keyup.enter="login()">
+            <input type="password" v-model="loginPass" class="login-field" placeholder="пароль" @keyup.enter="login()">
+            <button class="login-btn" @click="login()">⟡ войти</button>
+            <div class="login-err">{{ loginError }}</div>
+        </div>
+    </div>
+
+    <!-- ПАНЕЛЬ -->
+    <div v-else>
+
+        <div class="header glass">
+            <div class="header-title">
+                <span>⌘</span>
+                <span class="acc">Alpha</span> Raid
+                <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.08);margin-left:6px;">admin</span>
+            </div>
+            <div class="header-actions">
+                <span v-if="userRole === 'owner'" class="badge-owner">⌘ владелец</span>
+                <span v-else class="badge-admin">◈ админ</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.08);">{{ currentUser }}</span>
+                <button class="btn-exit" @click="logout()">✕ выйти</button>
+            </div>
+        </div>
+
+        <!-- СТАТЫ -->
+        <div class="stats-row">
+            <div class="stat-item glass" v-for="stat in statsData" :key="stat.label">
+                <span class="ic">{{ stat.icon }}</span>
+                <div class="num">{{ stat.value }}</div>
+                <div class="lbl">{{ stat.label }}</div>
+            </div>
+        </div>
+
+        <!-- СЕТКА -->
+        <div class="grid-main">
+
+            <!-- Серверы -->
+            <div class="card glass">
+                <div class="card-head"><span class="ic">⌘</span> Серверы</div>
+                <div v-for="server in servers" class="list-row">
+                    <span class="nm">{{ server }}</span>
+                    <button class="btn-s btn-danger" @click="deleteServer(server)">✕</button>
+                </div>
+                <div class="input-line">
+                    <input v-model="newServer" placeholder="имя сервера" @keyup.enter="addServer()">
+                    <button class="btn-add" @click="addServer()">+</button>
+                </div>
+            </div>
+
+            <!-- Белый список -->
+            <div class="card glass">
+                <div class="card-head"><span class="ic">◈</span> Белый список</div>
+                <div class="toggle-row">
+                    <div class="toggle-switch" :class="{ active: whitelist.enabled }" @click="toggleWhitelist()">
+                        <div class="knob"></div>
+                    </div>
+                    <span class="toggle-lbl" :class="{ active: whitelist.enabled }">
+                        {{ whitelist.enabled ? '◈ включён' : '○ выключен' }}
+                    </span>
+                </div>
+                <div v-for="player in whitelist.players" class="list-row">
+                    <span class="nm">{{ player }}</span>
+                    <button class="btn-s btn-danger" @click="removeWhitelist(player)">✕</button>
+                </div>
+                <div class="input-line">
+                    <input v-model="newWhitelist" placeholder="ник игрока" @keyup.enter="addWhitelist()">
+                    <button class="btn-add" @click="addWhitelist()">+</button>
+                </div>
+            </div>
+
+            <!-- Админы -->
+            <div class="card glass" v-if="userRole === 'owner'" style="border-color: rgba(245, 200, 66, 0.04);">
+                <div class="card-head"><span class="ic">◈</span> Администраторы</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.08);margin-bottom:10px;">⌘ только владелец управляет админами</div>
+                <div v-for="admin in adminsList" class="list-row">
+                    <span class="nm">{{ admin }}</span>
+                    <button class="btn-s btn-danger" @click="removeAdmin(admin)">✕</button>
+                </div>
+                <div class="input-line">
+                    <input v-model="newAdmin" placeholder="telegram id" @keyup.enter="addAdmin()">
+                    <button class="btn-add" @click="addAdmin()">+</button>
+                </div>
+                <div class="user-count">⌘ id через /myid в боте</div>
+            </div>
+
+            <!-- Бэкап -->
+            <div class="card glass">
+                <div class="card-head"><span class="ic">◈</span> Бэкап</div>
+                <div class="backup-line">
+                    <button class="btn-b btn-gold" @click="createBackup()">◈ создать</button>
+                    <button class="btn-b btn-green" @click="downloadBackup()">↓ скачать</button>
+                </div>
+                <div class="backup-info">⌘ последний: {{ lastBackup || 'нет' }}</div>
+                <div style="margin-top:4px;font-size:10px;color:rgba(255,255,255,0.06);">авто-бэкап: {{ settings.auto_backup ? '◈' : '○' }}</div>
+            </div>
+
+            <!-- Логи -->
+            <div class="card glass">
+                <div class="card-head"><span class="ic">⌘</span> Логи</div>
+                <div class="log-box" ref="logContainer">
+                    <div v-for="line in logs" class="log-line">
+                        <span class="t">{{ line.time }}</span>
+                        <span class="m">{{ line.msg }}</span>
+                    </div>
+                    <div v-if="!logs.length" style="color:rgba(255,255,255,0.06);text-align:center;padding:16px;font-size:12px;">⌘ логи пусты</div>
+                </div>
+                <div class="log-actions">
+                    <button class="btn-l btn-l-refresh" @click="loadLogs()">⟳ обновить</button>
+                    <button class="btn-l btn-l-clear" @click="clearLogs()">✕ очистить</button>
+                </div>
+            </div>
+
+            <!-- Настройки -->
+            <div class="card glass">
+                <div class="card-head"><span class="ic">◈</span> Настройки</div>
+                <div class="list-row"><span class="nm">⏱ кулдаун</span><span style="color:#f5c842;">{{ settings.cooldown }} сек</span></div>
+                <div class="list-row"><span class="nm">◈ мин. взрывов</span><span style="color:#f5c842;">{{ settings.min_explosions }}</span></div>
+                <div class="list-row"><span class="nm">◈ уведомления</span><span style="color:#6ae08a;">{{ settings.raid_notifications ? '◈' : '○' }}</span></div>
+                <div class="list-row"><span class="nm">◈ подключения</span><span style="color:#6ae08a;">{{ settings.connect_notifications ? '◈' : '○' }}</span></div>
+                <div style="display:flex;gap:8px;margin-top:12px;">
+                    <button class="btn-s btn-gold" @click="resetSettings()" style="flex:1;padding:8px;">⟳ сбросить</button>
+                </div>
+            </div>
+
+            <!-- РАССЫЛКА -->
+            <div class="card glass">
+                <div class="card-head"><span class="ic">⌘</span> Рассылка</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.08);margin-bottom:8px;">⌘ отправить сообщение всем пользователям</div>
+                <textarea v-model="mailText" class="mail-area" placeholder="текст сообщения..."></textarea>
+                <div class="mail-line">
+                    <button class="btn-m btn-m-send" @click="sendMail()">⌘ отправить</button>
+                    <button class="btn-m btn-m-test" @click="sendTestMail()">◈ тест</button>
+                </div>
+                <div class="user-count">⌘ пользователей для рассылки: {{ stats.all_users || 0 }}</div>
+            </div>
+
+            <!-- ПОЛЬЗОВАТЕЛИ САЙТА -->
+            <div class="card glass" v-if="userRole === 'owner'" style="border-color: rgba(245, 200, 66, 0.04);">
+                <div class="card-head"><span class="ic">◈</span> Пользователи сайта</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.08);margin-bottom:10px;">⌘ создавайте доступ для входа в админку</div>
+                <div v-for="user in siteUsers" class="list-row">
+                    <span class="nm">{{ user.login }}</span>
+                    <span>
+                        <span v-for="perm in user.permissions" class="permission-tag" :class="{ active: true }" style="margin-right:4px;">{{ perm }}</span>
+                        <button class="btn-s btn-blue" @click="editUserPermissions(user)" style="margin-right:4px;">◈ права</button>
+                        <button class="btn-s btn-danger" @click="deleteSiteUser(user)">✕</button>
+                    </span>
+                </div>
+                <div class="input-line">
+                    <input v-model="newSiteUser" placeholder="логин" @keyup.enter="addSiteUser()" style="flex:1;">
+                    <input v-model="newSitePass" placeholder="пароль" type="password" @keyup.enter="addSiteUser()" style="flex:1;">
+                    <select v-model="newSiteRole" style="flex:0.7;">
+                        <option value="admin">админ</option>
+                        <option value="viewer">наблюдатель</option>
+                    </select>
+                    <button class="btn-add" @click="addSiteUser()">+</button>
+                </div>
+                <div class="user-count">⌘ только владелец создаёт пользователей</div>
+            </div>
+
+            <!-- СМЕНА ДАННЫХ ВЛАДЕЛЬЦА -->
+            <div class="card glass" v-if="userRole === 'owner'" style="border-color: rgba(245, 200, 66, 0.06);">
+                <div class="card-head"><span class="ic">⌘</span> Сменить данные владельца</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.08);margin-bottom:10px;">⌘ измените логин и пароль для входа в админку</div>
+                <div class="input-line">
+                    <input v-model="newOwnerLogin" placeholder="новый логин" style="flex:1;">
+                    <input v-model="newOwnerPass" placeholder="новый пароль" type="password" style="flex:1;">
+                    <button class="btn-add" @click="updateOwner()">⟳ обновить</button>
+                </div>
+                <div class="user-count" style="margin-top:6px;">⌘ текущий: owner</div>
+            </div>
+
+        </div>
+
+        <div class="footer"><span>⌘</span> Alpha Raid <span>⌘</span></div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.min.js"></script>
+<script>
+// ============================================================
+// ПОДКЛЮЧЕНИЕ К ВАШЕМУ СЕРВЕРУ: http://f1.rustix.me:25170
+// ============================================================
+
+const API_URL = 'http://f1.rustix.me:25170';
+const OWNER_LOGIN = 'owner';
+const OWNER_PASSWORD = 'chmchm333222111';
+const SESSION_KEY = 'alpha_raid_session';
+
+new Vue({
+    el: '#app',
+    data: {
+        loggedIn: false,
+        loginUser: '',
+        loginPass: '',
+        loginError: '',
+        sessionId: '',
+        userRole: '',
+        currentUser: '',
+        permissions: [],
+        isLoading: false,
+        
+        stats: { users: 0, players: 0, raids: 0, admins: 0, all_users: 0 },
+        settings: { cooldown: 10, min_explosions: 3, auto_backup: true, raid_notifications: true, connect_notifications: true },
+        whitelist: { enabled: false, players: [] },
+        servers: [],
+        logs: [],
+        lastBackup: 'нет',
+        adminsList: [],
+        siteUsers: [],
+        
+        newServer: '',
+        newWhitelist: '',
+        newAdmin: '',
+        newSiteUser: '',
+        newSitePass: '',
+        newSiteRole: 'admin',
+        newOwnerLogin: '',
+        newOwnerPass: '',
+        mailText: ''
+    },
+    computed: {
+        statsData() {
+            return [
+                { icon: '⌘', value: this.stats.users || 0, label: 'привязанных' },
+                { icon: '◈', value: this.stats.players || 0, label: 'игроков' },
+                { icon: '⚡', value: this.stats.raids || 0, label: 'рейдов' },
+                { icon: '◈', value: this.stats.all_users || 0, label: 'всего пользователей' }
+            ];
+        }
+    },
+    methods: {
+        // ===== ВХОД =====
+        async login() {
+            this.loginError = '';
+            this.isLoading = true;
+            
+            // Проверяем владельца локально
+            if (this.loginUser === OWNER_LOGIN && this.loginPass === OWNER_PASSWORD) {
+                this.loggedIn = true;
+                this.userRole = 'owner';
+                this.currentUser = this.loginUser;
+                this.permissions = ['view_stats', 'manage_servers', 'manage_whitelist', 'manage_backup', 'view_logs', 'clear_logs', 'manage_settings', 'send_mail'];
+                localStorage.setItem(SESSION_KEY, JSON.stringify({ role: 'owner', login: this.loginUser }));
+                this.loginUser = '';
+                this.loginPass = '';
+                this.isLoading = false;
+                this.loadData();
+                return;
+            }
+            
+            // Пробуем авторизоваться через API
+            try {
+                const res = await fetch(`${API_URL}/api/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login: this.loginUser, password: this.loginPass })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.loggedIn = true;
+                    this.sessionId = data.session;
+                    this.userRole = data.role || 'admin';
+                    this.currentUser = this.loginUser;
+                    this.permissions = data.permissions || [];
+                    localStorage.setItem(SESSION_KEY, JSON.stringify({
+                        session: this.sessionId,
+                        role: this.userRole,
+                        login: this.currentUser,
+                        permissions: this.permissions
+                    }));
+                    this.loginUser = '';
+                    this.loginPass = '';
+                    this.isLoading = false;
+                    this.loadData();
+                    return;
+                }
+            } catch(e) {
+                console.log('API недоступен, используем локальный режим');
+            }
+            
+            // Проверяем пользователей сайта (локально)
+            const savedUsers = JSON.parse(localStorage.getItem('site_users') || '[]');
+            for (const user of savedUsers) {
+                if (user.login === this.loginUser && user.password === this.loginPass) {
+                    this.loggedIn = true;
+                    this.userRole = 'admin';
+                    this.currentUser = this.loginUser;
+                    this.permissions = user.permissions || ['view_stats'];
+                    localStorage.setItem(SESSION_KEY, JSON.stringify({ role: 'admin', login: this.loginUser }));
+                    this.loginUser = '';
+                    this.loginPass = '';
+                    this.isLoading = false;
+                    this.loadData();
+                    return;
+                }
+            }
+            
+            this.loginError = '⌘ неверный логин или пароль';
+            this.isLoading = false;
+        },
+        
+        // ===== ВОССТАНОВЛЕНИЕ СЕССИИ =====
+        restoreSession() {
+            const saved = localStorage.getItem(SESSION_KEY);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    this.loggedIn = true;
+                    this.userRole = data.role || 'admin';
+                    this.currentUser = data.login || 'admin';
+                    this.permissions = data.permissions || [];
+                    this.sessionId = data.session || '';
+                    this.loadData();
+                    return true;
+                } catch(e) {}
+            }
+            return false;
+        },
+        
+        logout() {
+            this.loggedIn = false;
+            this.userRole = '';
+            this.currentUser = '';
+            this.permissions = [];
+            this.sessionId = '';
+            localStorage.removeItem(SESSION_KEY);
+        },
+        
+        // ===== ЗАГРУЗКА ДАННЫХ =====
+        async loadData() {
+            try {
+                const res = await fetch(`${API_URL}/api/data`, {
+                    headers: { 'X-Session': this.sessionId }
+                });
+                if (res.status === 401) { this.logout(); return; }
+                const data = await res.json();
+                this.stats = data.stats;
+                this.settings = data.settings;
+                this.whitelist = data.whitelist;
+                this.servers = data.servers;
+                this.adminsList = data.adminsList || [];
+                this.lastBackup = data.lastBackup || 'нет';
+                this.siteUsers = data.siteUsers || [];
+                if (data.permissions) this.permissions = data.permissions;
+                if (data.role) this.userRole = data.role;
+                this.loadLogs();
+            } catch(e) {
+                // Локальный режим
+                this.servers = ['Devblog 236 x15', 'Devblog 240 x15'];
+                this.adminsList = JSON.parse(localStorage.getItem('admins_list') || '[]');
+                this.siteUsers = JSON.parse(localStorage.getItem('site_users') || '[]');
+                this.whitelist = JSON.parse(localStorage.getItem('whitelist_data') || '{"enabled":false,"players":[]}');
+                this.settings = JSON.parse(localStorage.getItem('settings_data') || '{"cooldown":10,"min_explosions":3,"auto_backup":true,"raid_notifications":true,"connect_notifications":true}');
+                this.stats = JSON.parse(localStorage.getItem('stats_data') || '{"users":0,"players":0,"raids":0,"admins":0,"all_users":0}');
+                this.loadLogs();
+            }
+        },
+        
+        saveAll() {
+            localStorage.setItem('admins_list', JSON.stringify(this.adminsList));
+            localStorage.setItem('site_users', JSON.stringify(this.siteUsers));
+            localStorage.setItem('whitelist_data', JSON.stringify(this.whitelist));
+            localStorage.setItem('servers_data', JSON.stringify(this.servers));
+            localStorage.setItem('settings_data', JSON.stringify(this.settings));
+            localStorage.setItem('stats_data', JSON.stringify(this.stats));
+        },
+        
+        // ===== ЛОГИ =====
+        async loadLogs() {
+            try {
+                const res = await fetch(`${API_URL}/api/logs`, {
+                    headers: { 'X-Session': this.sessionId }
+                });
+                if (res.status === 401) { this.logout(); return; }
+                const data = await res.json();
+                this.logs = data.map(line => {
+                    const match = line.match(/\[(.*?)\]\s*(.*)/);
+                    return match ? { time: match[1], msg: match[2] } : { time: '', msg: line };
+                });
+                this.$nextTick(() => {
+                    if (this.$refs.logContainer) {
+                        this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight;
+                    }
+                });
+            } catch(e) {
+                const now = new Date().toTimeString().slice(0,8);
+                this.logs = [
+                    { time: now, msg: '⌘ бот запущен' },
+                    { time: now, msg: '◈ система готова' },
+                ];
+            }
+        },
+        
+        clearLogs() {
+            if (!confirm('⌘ очистить логи?')) return;
+            this.logs = [];
+            if (this.sessionId) {
+                fetch(`${API_URL}/api/clear_logs`, {
+                    method: 'POST',
+                    headers: { 'X-Session': this.sessionId }
+                });
+            }
+        },
+        
+        // ===== СЕРВЕРЫ =====
+        async addServer() {
+            if (!this.newServer.trim()) return;
+            try {
+                await fetch(`${API_URL}/api/add_server`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ name: this.newServer })
+                });
+            } catch(e) { this.servers.push(this.newServer); }
+            this.newServer = '';
+            this.saveAll();
+            this.loadData();
+        },
+        async deleteServer(name) {
+            if (!confirm(`⌘ удалить сервер ${name}?`)) return;
+            try {
+                await fetch(`${API_URL}/api/delete_server`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ name: name })
+                });
+            } catch(e) { this.servers = this.servers.filter(s => s !== name); }
+            this.saveAll();
+            this.loadData();
+        },
+        
+        // ===== БЕЛЫЙ СПИСОК =====
+        async addWhitelist() {
+            if (!this.newWhitelist.trim()) return;
+            try {
+                await fetch(`${API_URL}/api/add_whitelist`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ name: this.newWhitelist })
+                });
+            } catch(e) { this.whitelist.players.push(this.newWhitelist); }
+            this.newWhitelist = '';
+            this.saveAll();
+            this.loadData();
+        },
+        async removeWhitelist(name) {
+            if (!confirm(`⌘ удалить ${name} из белого списка?`)) return;
+            try {
+                await fetch(`${API_URL}/api/remove_whitelist`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ name: name })
+                });
+            } catch(e) { this.whitelist.players = this.whitelist.players.filter(p => p !== name); }
+            this.saveAll();
+            this.loadData();
+        },
+        async toggleWhitelist() {
+            try {
+                await fetch(`${API_URL}/api/toggle_whitelist`, {
+                    method: 'POST',
+                    headers: { 'X-Session': this.sessionId }
+                });
+            } catch(e) { this.whitelist.enabled = !this.whitelist.enabled; }
+            this.saveAll();
+            this.loadData();
+        },
+        
+        // ===== АДМИНЫ =====
+        async addAdmin() {
+            if (!this.newAdmin.trim()) return;
+            if (this.adminsList.includes(this.newAdmin)) {
+                alert('⌘ этот админ уже в списке');
+                return;
+            }
+            try {
+                await fetch(`${API_URL}/api/add_admin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ id: this.newAdmin })
+                });
+            } catch(e) { this.adminsList.push(this.newAdmin); }
+            this.newAdmin = '';
+            this.saveAll();
+            this.loadData();
+        },
+        async removeAdmin(id) {
+            if (!confirm(`⌘ удалить админа ${id}?`)) return;
+            try {
+                await fetch(`${API_URL}/api/remove_admin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ id: id })
+                });
+            } catch(e) { this.adminsList = this.adminsList.filter(a => a !== id); }
+            this.saveAll();
+            this.loadData();
+        },
+        
+        // ===== БЭКАП =====
+        async createBackup() {
+            try {
+                await fetch(`${API_URL}/api/create_backup`, {
+                    method: 'POST',
+                    headers: { 'X-Session': this.sessionId }
+                });
+                alert('⌘ бэкап создан');
+            } catch(e) {
+                this.lastBackup = new Date().toLocaleString();
+                alert('⌘ бэкап создан');
+            }
+            this.loadData();
+        },
+        async downloadBackup() {
+            try {
+                window.location.href = `${API_URL}/api/download_backup?session=${this.sessionId}`;
+            } catch(e) {
+                alert('⌘ скачивание бэкапа...');
+            }
+        },
+        
+        // ===== НАСТРОЙКИ =====
+        async resetSettings() {
+            if (!confirm('⌘ сбросить настройки?')) return;
+            try {
+                await fetch(`${API_URL}/api/reset_settings`, {
+                    method: 'POST',
+                    headers: { 'X-Session': this.sessionId }
+                });
+            } catch(e) {}
+            this.settings = { cooldown: 10, min_explosions: 3, auto_backup: true, raid_notifications: true, connect_notifications: true };
+            this.saveAll();
+            this.loadData();
+        },
+        
+        // ===== РАССЫЛКА =====
+        async sendMail() {
+            if (!this.mailText.trim()) {
+                alert('⌘ введите текст');
+                return;
+            }
+            if (!confirm(`⌘ отправить рассылку ${this.stats.all_users || 0} пользователям?`)) return;
+            try {
+                const res = await fetch(`${API_URL}/api/send_mail`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ message: this.mailText })
+                });
+                const data = await res.json();
+                alert(`⌘ рассылка отправлена\nотправлено: ${data.sent || 0}\nне доставлено: ${data.failed || 0}`);
+            } catch(e) {
+                alert('⌘ рассылка отправлена');
+            }
+            this.mailText = '';
+        },
+        sendTestMail() {
+            if (!this.mailText.trim()) {
+                alert('⌘ введите текст');
+                return;
+            }
+            alert(`⌘ тестовое сообщение:\n\n${this.mailText}`);
+        },
+        
+        // ===== ПОЛЬЗОВАТЕЛИ САЙТА =====
+        async addSiteUser() {
+            if (!this.newSiteUser.trim() || !this.newSitePass.trim()) {
+                alert('⌘ введите логин и пароль');
+                return;
+            }
+            const permissions = this.newSiteRole === 'admin' 
+                ? ['view_stats', 'manage_servers', 'manage_whitelist', 'view_logs']
+                : ['view_stats'];
+            
+            if (this.siteUsers.find(u => u.login === this.newSiteUser)) {
+                alert('⌘ такой пользователь уже есть');
+                return;
+            }
+            
+            try {
+                await fetch(`${API_URL}/api/add_site_user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ 
+                        login: this.newSiteUser, 
+                        password: this.newSitePass,
+                        permissions: permissions
+                    })
+                });
+            } catch(e) {}
+            
+            this.siteUsers.push({
+                login: this.newSiteUser,
+                password: this.newSitePass,
+                permissions: permissions
+            });
+            this.newSiteUser = '';
+            this.newSitePass = '';
+            this.saveAll();
+            this.loadData();
+        },
+        async deleteSiteUser(user) {
+            if (!confirm(`⌘ удалить пользователя ${user.login}?`)) return;
+            try {
+                await fetch(`${API_URL}/api/delete_site_user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ login: user.login })
+                });
+            } catch(e) {}
+            this.siteUsers = this.siteUsers.filter(u => u.login !== user.login);
+            this.saveAll();
+            this.loadData();
+        },
+        editUserPermissions(user) {
+            const perms = prompt(`Права для ${user.login} (через запятую):\nДоступные: view_stats, manage_servers, manage_whitelist, view_logs, clear_logs, manage_settings, send_mail`, user.permissions.join(', '));
+            if (perms !== null) {
+                const newPerms = perms.split(',').map(p => p.trim()).filter(p => p);
+                const found = this.siteUsers.find(u => u.login === user.login);
+                if (found) {
+                    found.permissions = newPerms;
+                    try {
+                        fetch(`${API_URL}/api/update_user_perms`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                            body: JSON.stringify({ login: user.login, permissions: newPerms })
+                        });
+                    } catch(e) {}
+                    this.saveAll();
+                    this.loadData();
+                }
+            }
+        },
+        
+        // ===== СМЕНА ДАННЫХ ВЛАДЕЛЬЦА =====
+        async updateOwner() {
+            if (!this.newOwnerLogin.trim() || !this.newOwnerPass.trim()) {
+                alert('⌘ введите новый логин и пароль');
+                return;
+            }
+            if (!confirm(`⌘ обновить данные владельца?\nНовый логин: ${this.newOwnerLogin}`)) return;
+            
+            try {
+                await fetch(`${API_URL}/api/update_owner`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Session': this.sessionId },
+                    body: JSON.stringify({ 
+                        login: this.newOwnerLogin, 
+                        password: this.newOwnerPass 
+                    })
+                });
+            } catch(e) {}
+            
+            localStorage.setItem('owner_data', JSON.stringify({
+                login: this.newOwnerLogin,
+                password: this.newOwnerPass
+            }));
+            
+            alert(`⌘ данные владельца обновлены!\nНовый логин: ${this.newOwnerLogin}\nНовый пароль: ${this.newOwnerPass}\n\n⚠️ Запомните их!`);
+            this.newOwnerLogin = '';
+            this.newOwnerPass = '';
+        }
+    },
+    mounted() {
+        this.restoreSession();
+    }
+});
+</script>
+</body>
+</html>
