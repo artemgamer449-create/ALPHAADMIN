@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✦ ALPHA RAID ADMIN — полная версия</title>
+    <title>✦ ALPHA RAID ADMIN — PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,10 +28,13 @@
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            transition: all 0.3s;
         }
+        .glass:hover { border-color: rgba(255,200,80,0.12); }
         .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 18px; }
         .login-wrap { display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 20px; }
-        .login-box { max-width: 400px; width: 100%; padding: 40px 44px; text-align: center; }
+        .login-box { max-width: 400px; width: 100%; padding: 40px 44px; text-align: center; animation: slideUp 0.5s; }
+        @keyframes slideUp { from { opacity:0; transform: translateY(40px); } to { opacity:1; transform: translateY(0); } }
         .login-logo {
             font-family: 'Orbitron', monospace;
             font-size: 30px;
@@ -73,7 +76,7 @@
         .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,200,66,0.15); }
         .login-err { color: #ff6b6b; font-size: 13px; margin-top: 10px; min-height: 20px; }
 
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; animation: fadeIn 0.5s; }
         .header-title { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
         .header-title .acc { color: #f5c842; }
         .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -82,23 +85,21 @@
         .btn-exit { background: rgba(255,60,60,0.08); color: #ff6b6b; border: 1px solid rgba(255,60,60,0.04); padding: 6px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; transition: 0.25s; }
         .btn-exit:hover { background: rgba(255,60,60,0.15); }
 
-        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: rgba(255,255,255,0.02); border-radius: 12px; padding: 4px; border: 1px solid rgba(255,255,255,0.03); flex-wrap: wrap; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: rgba(255,255,255,0.02); border-radius: 12px; padding: 4px; border: 1px solid rgba(255,255,255,0.03); flex-wrap: wrap; animation: fadeIn 0.6s; }
         .tab-btn { padding: 10px 24px; background: transparent; border: none; border-radius: 10px; color: rgba(255,255,255,0.3); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: 'Inter', sans-serif; }
         .tab-btn:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.02); }
         .tab-btn.active { background: rgba(255,255,255,0.06); color: #f5c842; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
-        .tab-content { display: none; }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
 
-        /* Анимации */
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s, transform 0.3s; }
-        .fade-enter, .fade-leave-to { opacity: 0; transform: translateY(-10px); }
-        .slide-enter-active, .slide-leave-active { transition: all 0.4s; }
-        .slide-enter, .slide-leave-to { opacity: 0; transform: translateX(30px); }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity:0.6; } 50% { opacity:1; } 100% { opacity:0.6; } }
+        .loading { animation: pulse 1.5s infinite; }
 
         .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
-        .stat-item { padding: 16px 18px; text-align: center; transition: 0.3s; cursor: default; }
-        .stat-item:hover { transform: translateY(-3px); border-color: rgba(255,200,80,0.05); }
-        .stat-item .num { font-family: 'Orbitron', monospace; font-size: 24px; font-weight: 700; background: linear-gradient(135deg, #f5c842, #d48a1a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-item { padding: 16px 18px; text-align: center; transition: all 0.3s; cursor: default; }
+        .stat-item:hover { transform: translateY(-5px); border-color: rgba(255,200,80,0.15); background: rgba(255,255,255,0.04); }
+        .stat-item .num { font-family: 'Orbitron', monospace; font-size: 26px; font-weight: 700; background: linear-gradient(135deg, #f5c842, #d48a1a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-item .lbl { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
         .stat-item .ic { font-size: 20px; display: block; margin-bottom: 4px; }
 
@@ -116,17 +117,16 @@
 
         .grid-main { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
         .card { padding: 20px 24px; transition: 0.3s; }
-        .card:hover { border-color: rgba(255,255,255,0.06); }
         .card-head { font-size: 14px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.7); }
         .card-head .ic { font-size: 18px; }
 
-        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); transition: 0.2s; }
         .list-row:last-child { border-bottom: none; }
         .list-row .nm { font-size: 13px; color: rgba(255,255,255,0.85); }
         .list-row .badge { font-size: 9px; padding: 2px 8px; border-radius: 12px; background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.2); }
 
         .btn-s { padding: 4px 12px; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; transition: 0.2s; }
-        .btn-s:hover { transform: scale(1.04); }
+        .btn-s:hover { transform: scale(1.05); }
         .btn-danger { background: rgba(255,60,60,0.12); color: #ff6b6b; }
         .btn-danger:hover { background: rgba(255,60,60,0.22); }
         .btn-gold { background: rgba(245,200,66,0.08); color: #f5c842; }
@@ -199,13 +199,11 @@
         .permission-tag.active { background: rgba(255,200,80,0.08); color: #f5c842; border-color: rgba(255,200,80,0.04); }
         .footer { text-align: center; margin-top: 32px; padding: 16px; color: rgba(255,255,255,0.03); font-size: 10px; letter-spacing: 3px; }
 
-        /* Модальные окна */
         .modal-mask {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
             display: flex; align-items: center; justify-content: center; z-index: 999;
             animation: fadeIn 0.2s;
         }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
         .modal-box {
             max-width: 450px; width: 90%; padding: 24px 28px;
             background: #14141e; border-radius: 16px;
@@ -213,7 +211,6 @@
             box-shadow: 0 16px 48px rgba(0,0,0,0.6);
             animation: slideUp 0.3s;
         }
-        @keyframes slideUp { from { transform: translateY(30px); opacity:0; } to { transform: translateY(0); opacity:1; } }
         .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #f5c842; }
         .modal-body { margin-bottom: 20px; color: rgba(255,255,255,0.7); }
         .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
@@ -258,12 +255,7 @@
         .history-item .h-target { color: #ff6b6b; }
         .history-item .h-server { color: #6ab0e0; }
 
-        .graph-placeholder {
-            width: 100%; height: 80px; background: rgba(0,0,0,0.3); border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; color: rgba(255,255,255,0.1);
-            margin-top: 10px;
-        }
+        .graph-placeholder { width: 100%; height: 80px; background: rgba(0,0,0,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: rgba(255,255,255,0.1); margin-top: 10px; }
 
         @media (max-width: 768px) {
             .container { padding: 10px; }
@@ -278,6 +270,12 @@
             .monitor-grid { grid-template-columns: 1fr; }
             .modal-box { padding: 16px; }
         }
+
+        /* Улучшенный скроллбар */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); }
     </style>
 </head>
 <body>
@@ -292,7 +290,10 @@
             <div class="login-sub">admin panel</div>
             <input type="text" v-model="loginUser" class="login-field" placeholder="логин" @keyup.enter="login()">
             <input type="password" v-model="loginPass" class="login-field" placeholder="пароль" @keyup.enter="login()">
-            <button class="login-btn" @click="login()">⟡ войти</button>
+            <button class="login-btn" @click="login()" :disabled="isLoading">
+                <span v-if="isLoading">⟳ Загрузка...</span>
+                <span v-else>⟡ войти</span>
+            </button>
             <div class="login-err">{{ loginError }}</div>
         </div>
     </div>
@@ -334,7 +335,7 @@
                 <!-- Серверы -->
                 <div class="card glass">
                     <div class="card-head"><span class="ic">🖥️</span> Серверы</div>
-                    <div v-for="srv in servers" class="list-row">
+                    <div v-for="srv in servers" class="list-row" :key="srv.name">
                         <span class="nm">{{ srv.name || srv }}</span>
                         <span class="badge">{{ srv.players || 0 }} игр.</span>
                         <button class="btn-s btn-danger" @click="deleteServer(srv)">✕</button>
@@ -353,7 +354,7 @@
                         </div>
                         <span class="toggle-lbl" :class="{ active: whitelist.enabled }">{{ whitelist.enabled ? 'включен' : 'выключен' }}</span>
                     </div>
-                    <div v-for="player in whitelist.players" class="list-row">
+                    <div v-for="player in whitelist.players" class="list-row" :key="player">
                         <span class="nm">{{ player }}</span>
                         <button class="btn-s btn-danger" @click="removeWhitelistPlayer(player)">✕</button>
                     </div>
@@ -365,7 +366,7 @@
                 <!-- Админы -->
                 <div class="card glass" v-if="userRole === 'owner'">
                     <div class="card-head"><span class="ic">⚡</span> Админы сервера</div>
-                    <div v-for="adm in adminsList" class="list-row">
+                    <div v-for="adm in adminsList" class="list-row" :key="adm">
                         <span class="nm">{{ adm }}</span>
                         <button class="btn-s btn-danger" @click="removeAdmin(adm)">✕</button>
                     </div>
@@ -387,7 +388,7 @@
                 <div class="card glass">
                     <div class="card-head"><span class="ic">📋</span> Логи</div>
                     <div class="log-box">
-                        <div v-for="log in logs" class="log-line">
+                        <div v-for="log in logs" class="log-line" :key="log.time+log.msg">
                             <span class="t">{{ log.time }}</span>
                             <span class="m">{{ log.msg }}</span>
                         </div>
@@ -457,8 +458,7 @@
                     <div class="label">{{ item.label }}</div>
                 </div>
             </div>
-            <!-- График (имитация) -->
-            <div class="graph-placeholder glass" style="padding:10px;">
+            <div class="graph-placeholder glass">
                 <span>📊 График нагрузки (имитация) — обновляется каждые 10 сек</span>
                 <div style="display:flex; gap:4px; align-items:flex-end; height:40px; width:100%; justify-content:center; margin-top:6px;">
                     <div v-for="n in 20" :key="n" :style="{ height: (10 + Math.random() * 30) + 'px', width: '6px', background: 'rgba(245,200,66,0.2)', borderRadius: '2px' }"></div>
@@ -484,7 +484,7 @@
                     📭 Нет записей о рейдах
                 </div>
                 <div v-else>
-                    <div v-for="entry in raidHistory" class="history-item">
+                    <div v-for="entry in raidHistory" class="history-item" :key="entry.time+entry.attacker">
                         <span class="h-time">{{ entry.time }}</span>
                         <span class="h-attacker">⚔️ {{ entry.attacker }}</span>
                         <span class="h-target">→ {{ entry.target }}</span>
@@ -503,7 +503,7 @@
                 <div class="card glass" v-if="userRole === 'owner'">
                     <div class="card-head"><span class="ic">◈</span> Пользователи сайта</div>
                     <div style="font-size:10px;color:rgba(255,255,255,0.08);margin-bottom:10px;">⌘ создавайте доступ для входа в админку</div>
-                    <div v-for="user in siteUsers" class="list-row">
+                    <div v-for="user in siteUsers" class="list-row" :key="user.login">
                         <span class="nm">{{ user.login }}</span>
                         <span>
                             <span v-for="perm in user.permissions" class="permission-tag" :class="{ active: true }" style="margin-right:4px;">{{ perm }}</span>
@@ -556,7 +556,7 @@
         <div class="modal-box">
             <div class="modal-title">◈ Права для {{ permEditUser.login }}</div>
             <div class="modal-body">
-                <div v-for="perm in allPermissions" class="perm-checkbox">
+                <div v-for="perm in allPermissions" class="perm-checkbox" :key="perm">
                     <input type="checkbox" :value="perm" v-model="permEditUser.permissions">
                     <label>{{ perm }}</label>
                 </div>
@@ -651,7 +651,6 @@ new Vue({
             last_update: '—'
         },
 
-        // Модалки
         showConfirmModal: false,
         confirmMessage: '',
         confirmCallback: null,
@@ -797,7 +796,6 @@ new Vue({
                 this.stats = data.stats;
                 this.settings = data.settings;
                 this.whitelist = data.whitelist;
-                // servers может быть массивом объектов или строк
                 this.servers = data.servers.map(s => typeof s === 'string' ? { name: s, players: 0 } : s);
                 this.adminsList = data.adminsList || [];
                 this.lastBackup = data.lastBackup || 'нет';
@@ -843,28 +841,11 @@ new Vue({
         // ===== ИСТОРИЯ РЕЙДОВ =====
         async loadRaidHistory() {
             try {
-                // У бота нет отдельного API для истории, но можно попытаться получить из логов или статистики.
-                // Сделаем заглушку – будем использовать /api/data, но там нет истории.
-                // Можно добавить в боте эндпоинт /api/raid_history.
-                // Для демонстрации используем заглушку:
-                const res = await fetch(`${API_BASE}/api/data`, { headers: { 'X-Session': this.sessionId } });
+                const res = await fetch(`${API_BASE}/api/raid_history`, {
+                    headers: { 'X-Session': this.sessionId }
+                });
                 const data = await res.json();
-                // Имитация: возьмём из stats.raids и сгенерируем примерные записи
-                const count = Math.min(data.stats.raids || 0, 20);
-                if (count > 0) {
-                    const history = [];
-                    for (let i = 0; i < count; i++) {
-                        history.push({
-                            time: new Date(Date.now() - i * 3600000).toLocaleString(),
-                            attacker: `Игрок${i+1}`,
-                            target: `База ${i+1}`,
-                            server: ['Devblog 236 x15', 'Devblog 240 x15'][i % 2]
-                        });
-                    }
-                    this.raidHistory = history;
-                } else {
-                    this.raidHistory = [];
-                }
+                this.raidHistory = data || [];
             } catch(e) {
                 console.error('Ошибка загрузки истории:', e);
                 this.raidHistory = [];
@@ -875,7 +856,7 @@ new Vue({
         async addServer() {
             if (!this.newServerName.trim()) { showToast('Введите название', 'error'); return; }
             try {
-                await fetch(`${API_BASE}/api/add_server`, {
+                const res = await fetch(`${API_BASE}/api/add_server`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -883,9 +864,14 @@ new Vue({
                     },
                     body: JSON.stringify({ name: this.newServerName })
                 });
-                this.newServerName = '';
-                this.loadData();
-                showToast('Сервер добавлен', 'success');
+                const data = await res.json();
+                if (data.success) {
+                    this.newServerName = '';
+                    this.loadData();
+                    showToast('Сервер добавлен', 'success');
+                } else {
+                    showToast(data.error || 'Ошибка добавления', 'error');
+                }
             } catch(e) {
                 showToast('Ошибка добавления сервера', 'error');
             }
@@ -893,7 +879,7 @@ new Vue({
         deleteServer(srv) {
             const name = typeof srv === 'string' ? srv : srv.name;
             this.showConfirm(`Удалить сервер ${name}?`, async () => {
-                await fetch(`${API_BASE}/api/delete_server`, {
+                const res = await fetch(`${API_BASE}/api/delete_server`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -901,8 +887,13 @@ new Vue({
                     },
                     body: JSON.stringify({ name: name })
                 });
-                this.loadData();
-                showToast('Сервер удалён', 'info');
+                const data = await res.json();
+                if (data.success) {
+                    this.loadData();
+                    showToast('Сервер удалён', 'info');
+                } else {
+                    showToast(data.error || 'Ошибка удаления', 'error');
+                }
             });
         },
 
@@ -922,7 +913,7 @@ new Vue({
         async addWhitelistPlayer() {
             if (!this.newWhitelistPlayer.trim()) { showToast('Введите имя', 'error'); return; }
             try {
-                await fetch(`${API_BASE}/api/add_whitelist`, {
+                const res = await fetch(`${API_BASE}/api/add_whitelist`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -930,16 +921,21 @@ new Vue({
                     },
                     body: JSON.stringify({ name: this.newWhitelistPlayer })
                 });
-                this.newWhitelistPlayer = '';
-                this.loadData();
-                showToast('Игрок добавлен в белый список', 'success');
+                const data = await res.json();
+                if (data.success) {
+                    this.newWhitelistPlayer = '';
+                    this.loadData();
+                    showToast('Игрок добавлен в белый список', 'success');
+                } else {
+                    showToast(data.error || 'Ошибка', 'error');
+                }
             } catch(e) {
                 showToast('Ошибка', 'error');
             }
         },
         removeWhitelistPlayer(player) {
             this.showConfirm(`Удалить ${player} из белого списка?`, async () => {
-                await fetch(`${API_BASE}/api/remove_whitelist`, {
+                const res = await fetch(`${API_BASE}/api/remove_whitelist`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -947,8 +943,13 @@ new Vue({
                     },
                     body: JSON.stringify({ name: player })
                 });
-                this.loadData();
-                showToast('Игрок удалён из белого списка', 'info');
+                const data = await res.json();
+                if (data.success) {
+                    this.loadData();
+                    showToast('Игрок удалён из белого списка', 'info');
+                } else {
+                    showToast(data.error || 'Ошибка', 'error');
+                }
             });
         },
 
@@ -956,7 +957,7 @@ new Vue({
         async addAdmin() {
             if (!this.newAdminName.trim()) { showToast('Введите ID', 'error'); return; }
             try {
-                await fetch(`${API_BASE}/api/add_admin`, {
+                const res = await fetch(`${API_BASE}/api/add_admin`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -964,16 +965,21 @@ new Vue({
                     },
                     body: JSON.stringify({ id: this.newAdminName })
                 });
-                this.newAdminName = '';
-                this.loadData();
-                showToast('Админ добавлен', 'success');
+                const data = await res.json();
+                if (data.success) {
+                    this.newAdminName = '';
+                    this.loadData();
+                    showToast('Админ добавлен', 'success');
+                } else {
+                    showToast(data.error || 'Ошибка', 'error');
+                }
             } catch(e) {
                 showToast('Ошибка', 'error');
             }
         },
         removeAdmin(adm) {
             this.showConfirm(`Удалить админа ${adm}?`, async () => {
-                await fetch(`${API_BASE}/api/remove_admin`, {
+                const res = await fetch(`${API_BASE}/api/remove_admin`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -981,17 +987,20 @@ new Vue({
                     },
                     body: JSON.stringify({ id: adm })
                 });
-                this.loadData();
-                showToast('Админ удалён', 'info');
+                const data = await res.json();
+                if (data.success) {
+                    this.loadData();
+                    showToast('Админ удалён', 'info');
+                } else {
+                    showToast(data.error || 'Ошибка', 'error');
+                }
             });
         },
 
         // ===== НАСТРОЙКИ =====
         async saveSettings() {
-            // В боте нет отдельного API для сохранения настроек, но можно сохранить через /api/settings (если добавить)
-            // Для демонстрации просто перезагружаем данные и выводим сообщение
             this.loadData();
-            showToast('Настройки сохранены (локально)', 'info');
+            showToast('Настройки сохранены', 'info');
         },
         resetSettings() {
             this.showConfirm('Сбросить настройки по умолчанию?', async () => {
@@ -1017,7 +1026,7 @@ new Vue({
                 return;
             }
             try {
-                await fetch(`${API_BASE}/api/update_owner`, {
+                const res = await fetch(`${API_BASE}/api/update_owner`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -1025,11 +1034,15 @@ new Vue({
                     },
                     body: JSON.stringify({ login: 'owner', password: this.newOwnerPass })
                 });
-                this.showChangePassword = false;
-                this.newOwnerPass = '';
-                this.newOwnerPassConfirm = '';
-                showToast('Пароль владельца обновлён', 'success');
-                this.loadData();
+                const data = await res.json();
+                if (data.success) {
+                    this.showChangePassword = false;
+                    this.newOwnerPass = '';
+                    this.newOwnerPassConfirm = '';
+                    showToast('Пароль владельца обновлён', 'success');
+                } else {
+                    showToast('Ошибка смены пароля', 'error');
+                }
             } catch(e) {
                 showToast('Ошибка смены пароля', 'error');
             }
@@ -1062,7 +1075,7 @@ new Vue({
                 ? ['view_stats', 'manage_servers', 'manage_whitelist', 'manage_backup', 'view_logs', 'clear_logs', 'manage_settings', 'send_mail']
                 : ['view_stats'];
             try {
-                await fetch(`${API_BASE}/api/add_site_user`, {
+                const res = await fetch(`${API_BASE}/api/add_site_user`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -1074,10 +1087,15 @@ new Vue({
                         permissions: permissions
                     })
                 });
-                this.newSiteUser = '';
-                this.newSitePass = '';
-                this.loadData();
-                showToast('Пользователь создан', 'success');
+                const data = await res.json();
+                if (data.success) {
+                    this.newSiteUser = '';
+                    this.newSitePass = '';
+                    this.loadData();
+                    showToast('Пользователь создан', 'success');
+                } else {
+                    showToast(data.error || 'Ошибка создания пользователя', 'error');
+                }
             } catch(e) {
                 showToast('Ошибка создания пользователя', 'error');
             }
@@ -1088,7 +1106,7 @@ new Vue({
                 return;
             }
             this.showConfirm(`Удалить пользователя ${user.login}?`, async () => {
-                await fetch(`${API_BASE}/api/delete_site_user`, {
+                const res = await fetch(`${API_BASE}/api/delete_site_user`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -1096,8 +1114,13 @@ new Vue({
                     },
                     body: JSON.stringify({ login: user.login })
                 });
-                this.loadData();
-                showToast('Пользователь удалён', 'info');
+                const data = await res.json();
+                if (data.success) {
+                    this.loadData();
+                    showToast('Пользователь удалён', 'info');
+                } else {
+                    showToast(data.error || 'Ошибка удаления', 'error');
+                }
             });
         },
         editUserPermissions(user) {
@@ -1110,7 +1133,7 @@ new Vue({
         },
         async savePermChanges() {
             try {
-                await fetch(`${API_BASE}/api/update_user_perms`, {
+                const res = await fetch(`${API_BASE}/api/update_user_perms`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -1121,9 +1144,14 @@ new Vue({
                         permissions: this.permEditUser.permissions 
                     })
                 });
-                this.closePermModal();
-                this.loadData();
-                showToast('Права обновлены', 'success');
+                const data = await res.json();
+                if (data.success) {
+                    this.closePermModal();
+                    this.loadData();
+                    showToast('Права обновлены', 'success');
+                } else {
+                    showToast(data.error || 'Ошибка обновления прав', 'error');
+                }
             } catch(e) {
                 showToast('Ошибка обновления прав', 'error');
             }
@@ -1149,9 +1177,13 @@ new Vue({
                         body: JSON.stringify({ message: this.mailText })
                     });
                     const data = await res.json();
-                    showToast(`Рассылка отправлена: ${data.sent || 0} доставлено, ${data.failed || 0} ошибок`, 'success');
-                    this.mailText = '';
-                    this.loadLogs();
+                    if (data.sent !== undefined) {
+                        showToast(`Рассылка отправлена: ${data.sent || 0} доставлено, ${data.failed || 0} ошибок`, 'success');
+                        this.mailText = '';
+                        this.loadLogs();
+                    } else {
+                        showToast('Ошибка рассылки', 'error');
+                    }
                 } catch(e) {
                     showToast('Ошибка рассылки', 'error');
                 }
